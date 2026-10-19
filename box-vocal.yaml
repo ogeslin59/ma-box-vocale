@@ -1,0 +1,64 @@
+esphome:
+  name: box-vocal
+
+esp32:
+  board: esp32-s3-devkitc-1
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    version: recommended
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+logger:
+
+api:
+  encryption:
+    key: "TFpb+pBAvQIS1MVwaA7EoJ2DkpWE+79UvVro7yMyGdU="
+
+ota:
+  platform: esphome
+
+wifi:
+  ssid: casamia
+  password: O59G61M92D97
+  fast_connect: true
+  power_save_mode: none
+
+i2s_audio:
+  - id: i2s_in
+    i2s_lrclk_pin: GPIO40   # WS
+    i2s_bclk_pin: GPIO41    # SCK
+  - id: i2s_out
+    i2s_lrclk_pin: GPIO16
+    i2s_bclk_pin: GPIO15
+
+microphone:
+  - platform: i2s_audio
+    id: mic
+    i2s_audio_id: i2s_in
+    i2s_din_pin: GPIO42     # SD
+    adc_type: external
+    pdm: false
+    channel: left
+    
+speaker:
+  - platform: i2s_audio
+    id: spk
+    i2s_audio_id: i2s_out
+    i2s_dout_pin: GPIO17
+    dac_type: external
+    channel: mono
+
+micro_wake_word:
+  id: mww
+  microphone: mic
+  models:
+    - model: okay_nabu
+
+voice_assistant:
+  id: va
+  micro_wake_word: mww
+  speaker: spk
